@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.testviewpagerandtabhost"
+    package="com.yusun.traffic_manager"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -8,12 +8,12 @@
         android:targetSdkVersion="15" />
 
     <application
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/Yun.TextView"
          >
         <activity
-            android:name=".MainActivity"
+            android:name="com.yusun.traffic_manager.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".allsettings"></activity>
-        <activity android:name=".TrafficManagerActivity"></activity>
+        <activity android:name="com.yusun.traffic_manager.traffic_settings"></activity>
+        <activity android:name="com.yusun.traffic_manager.TrafficManagerActivity"></activity>
     </application>
 
 </manifest>

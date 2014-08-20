@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="Yun.TextView" parent="@android:style/Theme.Holo.Light.NoActionBar">
+
+        </style>
+
+</resources>

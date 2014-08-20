@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">流量管家</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="traffic_manager">流量管理</string>
+    <string name="traffic">00.00KB</string>
+</resources>
+    

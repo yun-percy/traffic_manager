@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <header android:title="附加功能" />
+    <header android:id="@id/yun_settings" android:title="新增功能">
+        <intent android:targetPackage="com.roiding.timedwireless" 
+            android:action="android.intent.action.MAIN" 
+            android:targetClass="com.roiding.timedwireless.SettingsActivity" />
+    </header>
+</preference-headers>

@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -15,13 +19,16 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.TrafficStats;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -34,7 +41,9 @@ public class TrafficManagerActivity extends Activity
 	private TextView tv_traffic_wifi;
 	private ListView lv_traffic_content;
 	private TrafficAdapter adapter;
-	CircleProgress sector;
+	CircularProgressDrawable drawable;
+	private ImageView traffic_handle , circle_image;
+//	CircleProgress sector;
 	private List<TrafficInfo> trafficInfos;
 
 	private Timer timer;
@@ -61,8 +70,8 @@ public class TrafficManagerActivity extends Activity
 		tv_traffic_2g_3g = (TextView) findViewById(R.id.tv_traffic_2g_3g);
 		tv_traffic_wifi = (TextView) findViewById(R.id.tv_traffic_wifi);
 		lv_traffic_content = (ListView) findViewById(R.id.lv_traffic_content);
-		sector= (CircleProgress) findViewById(R.id.circle_image);
-
+//		sector= (CircleProgress) findViewById(R.id.circle_image);
+		traffic_handle=(ImageView)findViewById(R.id.iv_traffic_handle);
 		
 		
 //		fix_all.setOnClickListener(new OnClickListener() {
@@ -81,18 +90,6 @@ public class TrafficManagerActivity extends Activity
 		adapter = new TrafficAdapter();
 		lv_traffic_content.setAdapter(adapter);
 		
-//        +++++++++++++++++++++++++++计算流量+++++++++++++++++++++++++
-       
-      
-//        if(all_traffic.getText().toString()==null){
-//        	mall_traffic="未知";
-//        }
-//        else{
-//        	mall_traffic=all_traffic.getText().toString();
-//        }
-        
-   //     display_all.setTag("流量套餐为： "+mall_traffic+ "MB" );
-//        ++++++++++++++++++++++++++++结束结算流量++++++++++++++
 	}
 	
 	@Override
@@ -141,7 +138,7 @@ public class TrafficManagerActivity extends Activity
 		 float total_2g_3g =  total_2g_3g_received + total_2g_3g_transmitted + used_data*1024*1024;
 //		++++++++++++++结束++++++++++++++
 		 int percent= (int)(total_2g_3g/all_data*100);
-		 tv_traffic_2g_3g.setText("2G/3g 总流量：" + TextFormater.dataSizeFormat(total_2g_3g));
+		 tv_traffic_2g_3g.setText("GPRS流量：\n" + TextFormater.dataSizeFormat(total_2g_3g));
 		if(total_2g_3g < 1024)
 		{
 			total_2g_3g=total_2g_3g*1 ;
@@ -179,39 +176,26 @@ public class TrafficManagerActivity extends Activity
 		////拿到wifi的总数据大小
 		long total_wifi = total - total_2g_3g_true;
 		
-		tv_traffic_wifi.setText("wifi已使用：" + TextFormater.dataSizeFormat(total_wifi));
+		tv_traffic_wifi.setText("wifi流量： \n" + TextFormater.dataSizeFormat(total_wifi));
 		
-		System.out.println("!!!!!!!!!!"+total_2g_3g+"@@@@@@@@@@@"+all_data+"#############"+percent);
 //		##########################画圆##################3
-		sector.setType(CircleProgress.SECTOR);
+	
 		if(percent >=100){
 			percent=100;
 		}
+		circle_image = (ImageView) findViewById(R.id.circle_image);
+	       
+
+        drawable = new CircularProgressDrawable(getResources().getDimensionPixelSize(R.dimen.drawable_ring_size),
+                getResources().getColor(android.R.color.darker_gray),
+                getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_blue_dark));
+        circle_image.setImageDrawable(drawable);
+		Animator currentAnimation;
+		
     	final int circle_number=percent;
-        new AsyncTask<Integer, Integer, Integer>() {
-            @Override
-            protected Integer doInBackground(Integer... params) {
-                for(int i=0;i<=circle_number;i++){
-                    publishProgress(i);
-                    
-                    
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                super.onProgressUpdate(values);
-                sector.setmSubCurProgress(values[0]);
-            }
-
-
-        }.execute(0);
+    	currentAnimation = prepareStyle2Animation(percent);
+    	currentAnimation.start();
 	}
 //	##########################画圆##################3
 	//拿到所有会产生流量的应用信息
@@ -313,6 +297,7 @@ public class TrafficManagerActivity extends Activity
 				holder = (ViewHolder) view.getTag();
 			}
 			holder.iv_traffic_icon.setImageDrawable(info.getIcon());
+//			holder.iv_traffic_icon.setI
 			holder.tv_traffic_name.setText(info.getName());
 			//根据uid得到这个应用的接收数据大小
 			long received = TrafficStats.getUidRxBytes(info.getUid());
@@ -332,5 +317,71 @@ public class TrafficManagerActivity extends Activity
 		TextView tv_traffic_received;
 		TextView tv_traffic_transmitted;
 	}
-
+	private Animator prepareStyle2Animation(int percent) {
+        AnimatorSet animation = new AnimatorSet();
+        float progress=(float)percent/100;
+        ObjectAnimator progressAnimation = ObjectAnimator.ofFloat(drawable, CircularProgressDrawable.PROGRESS_PROPERTY, 0f,progress);
+        progressAnimation.setDuration(3600);
+        progressAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+        ObjectAnimator colorAnimator = ObjectAnimator.ofInt(drawable, "ringColor", getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_red_dark));
+        if(percent <50){
+        	  colorAnimator = ObjectAnimator.ofInt(drawable, "ringColor", getResources().getColor(android.R.color.holo_green_light),
+                     getResources().getColor(R.color.green_dark));
+        }
+        else if(percent <80){
+        	colorAnimator = ObjectAnimator.ofInt(drawable, "ringColor", getResources().getColor(android.R.color.holo_green_light),
+                    getResources().getColor(R.color.bule));
+       
+        }
+        else if (percent <95){
+        	colorAnimator = ObjectAnimator.ofInt(drawable, "ringColor", getResources().getColor(android.R.color.holo_green_light),
+                    getResources().getColor(R.color.orign));
+       
+        }
+        else{
+         colorAnimator = ObjectAnimator.ofInt(drawable, "ringColor", getResources().getColor(android.R.color.holo_green_light),
+                getResources().getColor(android.R.color.holo_red_dark));
+        }
+        colorAnimator.setEvaluator(new ArgbEvaluator());
+        colorAnimator.setDuration(3600);
+        Animator innerCircleAnimation = ObjectAnimator.ofFloat(drawable, CircularProgressDrawable.CIRCLE_FILL_PROPERTY, 1f, 0f);
+        innerCircleAnimation.setDuration(1200);
+        innerCircleAnimation.setInterpolator(new AnticipateInterpolator());
+        Animator invertedCircle = ObjectAnimator.ofFloat(drawable, CircularProgressDrawable.CIRCLE_FILL_PROPERTY, 0f, 1f);
+        invertedCircle.setDuration(2200);
+        invertedCircle.setStartDelay(1500);
+        invertedCircle.setInterpolator(new OvershootInterpolator());
+        animation.playTogether(progressAnimation, colorAnimator,innerCircleAnimation,invertedCircle);
+        return animation;
+    }
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    // TODO Auto-generated method stub
+	    if(keyCode == KeyEvent.KEYCODE_BACK)
+	       {  
+	           exitBy2Click();      //调用双击退出函数
+	       }
+	    return false;
+	}
+	private static Boolean isExit = false;
+	     
+	private void exitBy2Click() {
+	    Timer tExit = null;
+	    if (isExit == false) {
+	        isExit = true; // 准备退出
+	        Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+	        tExit = new Timer();
+	        tExit.schedule(new TimerTask() {
+	            @Override
+	            public void run() {
+	                isExit = false; // 取消退出
+	            }
+	        }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+	     
+	    } else {
+	        finish();
+	        System.exit(0);
+	    }
+}
 }

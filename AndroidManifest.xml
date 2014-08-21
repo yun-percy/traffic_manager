@@ -10,7 +10,7 @@
     <application
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@style/Yun.TextView"
+        android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar"
          >
         <activity
             android:name="com.yusun.traffic_manager.MainActivity"

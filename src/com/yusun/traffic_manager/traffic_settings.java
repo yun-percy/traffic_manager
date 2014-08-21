@@ -70,7 +70,7 @@ OnClickListener doneListener = new OnClickListener() {
             float all_data1=ferences.getFloat("all", 20);  
             float used_data1=ferences.getFloat("used",20);
           display_all.setText(String.valueOf(all_data1));  
-          display_used.setText(String.valueOf(used_data));  
+          display_used.setText(String.valueOf(used_data1));  
           display_all.setVisibility(0);
           display_used.setVisibility(0);
  			all_traffic.setVisibility(4);

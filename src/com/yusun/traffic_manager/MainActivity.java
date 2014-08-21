@@ -2,6 +2,8 @@ package com.yusun.traffic_manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.LocalActivityManager;
@@ -15,6 +17,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -22,6 +25,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -35,7 +39,35 @@ public class MainActivity extends Activity {
 	private int currIndex = 0;
 	private int bmpW;
 	private ImageView cursor;
-
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    // TODO Auto-generated method stub
+	    if(keyCode == KeyEvent.KEYCODE_BACK)
+	       {  
+	           exitBy2Click();      //调用双击退出函数
+	       }
+	    return false;
+	}
+	private static Boolean isExit = false;
+	     
+	private void exitBy2Click() {
+	    Timer tExit = null;
+	    if (isExit == false) {
+	        isExit = true; // 准备退出
+	        Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+	        tExit = new Timer();
+	        tExit.schedule(new TimerTask() {
+	            @Override
+	            public void run() {
+	                isExit = false; // 取消退出
+	            }
+	        }, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+	     
+	    } else {
+	        finish();
+	        System.exit(0);
+	    }
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -192,6 +224,7 @@ public class MainActivity extends Activity {
 			
 		}
 	}
+	
 	public class MyOnClickListener implements View.OnClickListener {
 		private int index = 0;
 

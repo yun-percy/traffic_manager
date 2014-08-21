@@ -17,7 +17,7 @@
             android:layout_weight="1.0"
             android:gravity="center"
             android:text="流量管家"
-            android:textColor="#252525"
+            android:textColor="#ffffff"
             android:textSize="18.0dip" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_weight="1.0"
             android:gravity="center"
             android:text="流量设置"
-            android:textColor="#bbbbbb"
+            android:textColor="#909090"
             android:textSize="18.0dip" />
 
         <TextView

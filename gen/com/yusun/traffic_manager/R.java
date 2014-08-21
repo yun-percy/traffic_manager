@@ -20,27 +20,28 @@ public final class R {
     }
     public static final class drawable {
         public static final int app=0x7f020000;
-        public static final int batteryempty=0x7f020001;
-        public static final int download=0x7f020002;
-        public static final int handle_down=0x7f020003;
-        public static final int handle_up=0x7f020004;
-        public static final int ic_action_search=0x7f020005;
-        public static final int ic_launcher=0x7f020006;
-        public static final int icon=0x7f020007;
-        public static final int roller=0x7f020008;
-        public static final int upload=0x7f020009;
-        public static final int yun=0x7f02000a;
+        public static final int bg_transparent=0x7f020001;
+        public static final int bg_transparent_press=0x7f020002;
+        public static final int button_bg=0x7f020003;
+        public static final int download=0x7f020004;
+        public static final int handle_down=0x7f020005;
+        public static final int handle_up=0x7f020006;
+        public static final int ic_action_search=0x7f020007;
+        public static final int icon=0x7f020008;
+        public static final int roller=0x7f020009;
+        public static final int upload=0x7f02000a;
     }
     public static final class id {
         public static final int all_traffic=0x7f060015;
         public static final int all_traffic_main=0x7f06000c;
+        public static final int cancel=0x7f060018;
         public static final int circle_image=0x7f060007;
         public static final int cursor=0x7f060005;
         public static final int discription=0x7f06000a;
         public static final int display_all=0x7f060014;
-        public static final int display_used=0x7f060017;
-        public static final int done=0x7f060016;
-        public static final int fix=0x7f060019;
+        public static final int display_used=0x7f060016;
+        public static final int done=0x7f060019;
+        public static final int fix=0x7f06001a;
         public static final int iv_traffic_handle=0x7f06000f;
         public static final int iv_traffic_icon=0x7f060010;
         public static final int linearLayout1=0x7f060001;
@@ -55,7 +56,7 @@ public final class R {
         public static final int tv_traffic_received=0x7f060013;
         public static final int tv_traffic_transmitted=0x7f060012;
         public static final int tv_traffic_wifi=0x7f06000d;
-        public static final int used_traffic=0x7f060018;
+        public static final int used_traffic=0x7f060017;
         public static final int viewpage=0x7f060006;
         public static final int yun_settings=0x7f060000;
     }
@@ -74,5 +75,6 @@ public final class R {
     }
     public static final class style {
         public static final int Yun_TextView=0x7f080000;
+        public static final int setting_text=0x7f080001;
     }
 }

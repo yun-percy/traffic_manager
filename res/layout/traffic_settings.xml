@@ -5,66 +5,82 @@
     android:orientation="vertical" >
     
     <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/setting_text"
         android:padding="10dp"
         android:text="流量套餐："/>
     <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/display_all"
-        android:padding="10dp"
-        android:layout_alignParentRight="true"
+        style="@style/setting_text"
+        android:layout_centerHorizontal="true"
         android:text="未知"
         />
-    <EditText 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/all_traffic"
+    <TextView 
         android:layout_alignParentRight="true"
+        style="@style/setting_text"
+        android:text="MB"/>
+    <EditText 
+        android:id="@+id/all_traffic"
+        android:layout_centerHorizontal="true"
         android:visibility="invisible"
-        android:padding="10dp"
-
-        android:hint="校准流量"/>
+		 style="@style/setting_text"
+		 android:background="@null"
+		 android:textColorHint="#009944"
+        android:hint="请输入数字"/>
+    
+    <TextView 
+        android:text="已使用："
+        style="@style/setting_text"
+        android:layout_below="@id/display_all"
+        />
+    <TextView 
+        android:id="@+id/display_used"
+        android:text="未知"
+        style="@style/setting_text"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/display_all"
+        />
+    <TextView 
+        android:layout_alignParentRight="true"
+        style="@style/setting_text"
+        
+        android:layout_below="@id/display_all"
+        android:text="MB"/>
+    <EditText 
+        style="@style/setting_text"
+        android:id="@+id/used_traffic"
+        android:layout_below="@id/display_all"
+        android:visibility="invisible"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:textColorHint="#009944"
+        android:hint="不输入则不改变"/>
     <Button 
-        android:layout_width="fill_parent"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="取消"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/used_traffic"
+        android:visibility="invisible"
+        android:padding="20dp"
+         android:background="@drawable/button_bg"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/cancel"/>
+    <Button 
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="保存"
+        android:background="@drawable/button_bg"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/cancel"
         android:visibility="invisible"
-        android:layout_alignParentBottom="true"
         android:padding="20dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/done"/>
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="已使用："
-        android:padding="10dp"
-        android:layout_below="@id/display_all"
-        />
-    <TextView 
-        android:layout_width="wrap_content"
-        android:id="@+id/display_used"
-        android:layout_height="wrap_content"
-        android:text="未知"
-        android:padding="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/display_all"
-        />
-    <EditText 
-        android:layout_width="wrap_content"
-        android:id="@+id/used_traffic"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/display_all"
-        android:padding="10dp"
-        android:visibility="invisible"
-        android:layout_alignParentRight="true"
-     
-        android:hint="校准已使用流量"/>
-	<Button android:layout_width="fill_parent"
+	<Button android:layout_width="200dp"
 	    android:layout_height="wrap_content"
 	    android:text="校准"
 	    android:padding="20dp"
+	    android:background="@drawable/button_bg"
 	    android:layout_alignParentBottom="true"
 	    android:layout_centerHorizontal="true"
 	    android:id="@+id/fix"

@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class traffic_settings extends Activity{
-	private Button done ,fix;
+	private Button done ,cancel,fix;
 	private EditText all_traffic=null, used_traffic=null;
 	private TextView display_all,display_used;
 	@Override
@@ -27,14 +28,14 @@ public class traffic_settings extends Activity{
 		used_traffic=(EditText)findViewById(R.id.used_traffic);
 		display_all=(TextView)findViewById(R.id.display_all);
 		display_used=(TextView)findViewById(R.id.display_used);
-		
+		cancel=(Button)findViewById(R.id.cancel);
 		done=(Button)findViewById(R.id.done);
 		initView();
 		
 		fix=(Button)findViewById(R.id.fix);
 		done.setOnClickListener(doneListener);
 		fix.setOnClickListener(fixListener);
-		
+		cancel.setOnClickListener(cancelListener);
 }
 OnClickListener doneListener = new OnClickListener() {
 		
@@ -44,16 +45,13 @@ OnClickListener doneListener = new OnClickListener() {
              String used_data=used_traffic.getText().toString();  
              SharedPreferences preferences=getSharedPreferences("softinfo",Context.MODE_WORLD_READABLE);  
              Editor edit=preferences.edit();  
-             System.out.println ("##########"+all_data+"$$$$$$$$$$"+used_data);
              if(all_data.equals("")){
-            	 System.out.println ("##########"+all_data);
-            
+            	
              }
              else {
             	 edit.putFloat("all", new Float(all_data)); 
              }
             if(used_data.equals("")){
-            	System.out.println ("##########"+all_data);
             }
             else{
             		 edit.putFloat("used",new Float(used_data)); 
@@ -77,6 +75,7 @@ OnClickListener doneListener = new OnClickListener() {
  			used_traffic.setVisibility(4);
  			fix.setVisibility(0);
  			done.setVisibility(4);
+ 			cancel.setVisibility(4);
 		}
 	};
 	OnClickListener fixListener = new OnClickListener() {
@@ -89,7 +88,26 @@ OnClickListener doneListener = new OnClickListener() {
 			used_traffic.setVisibility(0);
 			fix.setVisibility(4);
 			done.setVisibility(0);
+			cancel.setVisibility(0);
 			
+		}
+	};
+	OnClickListener cancelListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			display_all.setVisibility(0);
+			display_used.setVisibility(0);
+			all_traffic.setVisibility(4);
+			used_traffic.setVisibility(4);
+			fix.setVisibility(0);
+			done.setVisibility(4);
+			cancel.setVisibility(4);
+			View view = getWindow().peekDecorView();
+	        if (view != null) {
+	            InputMethodManager inputmanger = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+	        }
 		}
 	};
 	private void initView(){

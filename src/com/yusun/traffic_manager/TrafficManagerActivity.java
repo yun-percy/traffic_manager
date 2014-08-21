@@ -1,5 +1,6 @@
 package com.yusun.traffic_manager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -11,8 +12,10 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -24,6 +27,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -37,7 +41,7 @@ import android.widget.Toast;
 
 public class TrafficManagerActivity extends Activity
 {
-	private TextView tv_traffic_2g_3g,all_traffic=null,used_traffic=null ;
+	private TextView tv_traffic_2g_3g,all_traffic=null,used_traffic=null,remain_hit,percent_hit ;
 	private TextView tv_traffic_wifi;
 	private ListView lv_traffic_content;
 	private TrafficAdapter adapter;
@@ -70,6 +74,8 @@ public class TrafficManagerActivity extends Activity
 		tv_traffic_2g_3g = (TextView) findViewById(R.id.tv_traffic_2g_3g);
 		tv_traffic_wifi = (TextView) findViewById(R.id.tv_traffic_wifi);
 		lv_traffic_content = (ListView) findViewById(R.id.lv_traffic_content);
+		remain_hit=(TextView)findViewById(R.id.remain_hit);
+		percent_hit=(TextView)findViewById(R.id.percent_hit);
 //		sector= (CircleProgress) findViewById(R.id.circle_image);
 		traffic_handle=(ImageView)findViewById(R.id.iv_traffic_handle);
 		
@@ -134,11 +140,18 @@ public class TrafficManagerActivity extends Activity
         float all_data=ferences.getFloat("all", 20);  
         float used_data=ferences.getFloat("used", 20);  
         tv_traffic_2g_3g.setText(String.valueOf(used_data));  
-		
+        all_traffic.setText("流量套餐 \n"+String.valueOf(all_data)+"MB");
 		 float total_2g_3g =  total_2g_3g_received + total_2g_3g_transmitted + used_data*1024*1024;
-//		++++++++++++++结束++++++++++++++
+		 /////////////////////////////////////将更新的流量数据保留
+		float mmtotal_2g_3g = total_2g_3g/(1024*1024);
+         SharedPreferences preferences=getSharedPreferences("softinfo",Context.MODE_WORLD_READABLE);  
+        Editor edit=preferences.edit();  
+        edit.putFloat("used",new Float(mmtotal_2g_3g)); 
+         edit.commit();  
+         Toast.makeText(TrafficManagerActivity.this, "成功",Toast.LENGTH_LONG).show();  
+         /////////////////////////////////////结束
 		 int percent= (int)(total_2g_3g/all_data*100);
-		 tv_traffic_2g_3g.setText("GPRS流量：\n" + TextFormater.dataSizeFormat(total_2g_3g));
+		 tv_traffic_2g_3g.setText("GPRS流量 \n" + TextFormater.dataSizeFormat(total_2g_3g));
 		if(total_2g_3g < 1024)
 		{
 			total_2g_3g=total_2g_3g*1 ;
@@ -165,7 +178,7 @@ public class TrafficManagerActivity extends Activity
 		{
 			Toast.makeText(TrafficManagerActivity.this,"数据这么大？你玩我？",Toast.LENGTH_LONG).show();;
 		}
-		
+//		++++++++++++++结束++++++++++++++
 		
 		//拿到总共接收到的数据大小
 		long total_received = TrafficStats.getTotalRxBytes();
@@ -174,15 +187,30 @@ public class TrafficManagerActivity extends Activity
 		//拿到总数据大小
 		long total = total_received + total_transmitted;
 		////拿到wifi的总数据大小
-		long total_wifi = total - total_2g_3g_true;
-		
-		tv_traffic_wifi.setText("wifi流量： \n" + TextFormater.dataSizeFormat(total_wifi));
+		long wifi_data=ferences.getLong("wifi", 0); 
+		long total_wifi = wifi_data+total - total_2g_3g_true;
+        edit.putLong("wifi",new Long(total_wifi)); 
+         edit.commit();  
+		tv_traffic_wifi.setText("wifi流量 \n" + TextFormater.dataSizeFormat(total_wifi));
 		
 //		##########################画圆##################3
 	
 		if(percent >=100){
 			percent=100;
 		}
+		percent_hit.setText(100-percent+"% 剩余");
+		DecimalFormat remainhit_format = new DecimalFormat("##0.00");
+		float remainhit_data=all_data-total_2g_3g;
+		if(remainhit_data <0){
+			remainhit_data=total_2g_3g-all_data;
+			String remain_hitten=remainhit_format.format((remainhit_data));
+			remain_hit.setText("已超出 "+remain_hitten+"MB");
+		}
+		if(remainhit_data >=0){
+			String remain_hitten=remainhit_format.format((all_data-total_2g_3g));
+			remain_hit.setText("剩余流量 "+remain_hitten+"MB");
+		}
+		
 		circle_image = (ImageView) findViewById(R.id.circle_image);
 	       
 
@@ -191,12 +219,28 @@ public class TrafficManagerActivity extends Activity
                 getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_blue_dark));
         circle_image.setImageDrawable(drawable);
-		Animator currentAnimation;
+		final Animator currentAnimation;
 		
-    	final int circle_number=percent;
     	currentAnimation = prepareStyle2Animation(percent);
     	currentAnimation.start();
+    	circle_image.setOnClickListener(new OnClickListener(){
+    		@Override
+    		public void onClick(View arg0) {
+    			currentAnimation.start();
+    			
+    		}
+    	});
 	}
+//	OnClickListener circle_image_animationListenter=new OnClickListener() {
+//		
+//		@Override
+//		public void onClick(View arg0) {
+//			currentAnimation.start();
+//			
+//		}
+//	};
+		
+	
 //	##########################画圆##################3
 	//拿到所有会产生流量的应用信息
 	private void initResolveInfos()
@@ -297,7 +341,6 @@ public class TrafficManagerActivity extends Activity
 				holder = (ViewHolder) view.getTag();
 			}
 			holder.iv_traffic_icon.setImageDrawable(info.getIcon());
-//			holder.iv_traffic_icon.setI
 			holder.tv_traffic_name.setText(info.getName());
 			//根据uid得到这个应用的接收数据大小
 			long received = TrafficStats.getUidRxBytes(info.getUid());
@@ -307,9 +350,7 @@ public class TrafficManagerActivity extends Activity
 			holder.tv_traffic_transmitted.setText(TextFormater.dataSizeFormat(transmitted));
 			return view;
 		}
-		
 	}
-	
 	private class ViewHolder
 	{
 		ImageView iv_traffic_icon;
@@ -357,7 +398,6 @@ public class TrafficManagerActivity extends Activity
     }
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    // TODO Auto-generated method stub
 	    if(keyCode == KeyEvent.KEYCODE_BACK)
 	       {  
 	           exitBy2Click();      //调用双击退出函数

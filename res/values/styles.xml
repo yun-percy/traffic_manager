@@ -1,6 +1,14 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Yun.TextView" parent="@android:style/Theme.Holo.Light.NoActionBar">
+
+        </style>
+     <style name="setting_text" parent="@android:style/Theme.Holo">
+         <item name="android:layout_width">wrap_content</item>
+         <item name="android:layout_height">wrap_content</item>
+         <item name="android:textSize">18sp</item>
+         <item name="android:padding">10dp</item>
+         <item name="android:textColor">#ffffff</item>
 
         </style>
 

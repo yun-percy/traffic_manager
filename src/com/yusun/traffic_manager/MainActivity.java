@@ -181,8 +181,8 @@ public class MainActivity extends Activity {
 			case 0:
 				if (currIndex == 1) {
 					animation = new TranslateAnimation(one, 0, 0, 0);
-						t1.setTextColor(0xff000000);
-						t2.setTextColor(0xffaaaaaa);
+						t1.setTextColor(0xffffffff);
+						t2.setTextColor(0xff909090);
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(two, 0, 0, 0);
 				}
@@ -190,8 +190,8 @@ public class MainActivity extends Activity {
 			case 1:
 				if (currIndex == 0) {
 					animation = new TranslateAnimation(offset, one, 0, 0);
-					t1.setTextColor(0xffaaaaaa);
-					t2.setTextColor(0xff000000);
+					t1.setTextColor(0xff909090);
+					t2.setTextColor(0xffffffff);
 				} else if (currIndex == 2) {
 					animation = new TranslateAnimation(two, one, 0, 0);	
 					t2.setTextColor(0xffffffff);

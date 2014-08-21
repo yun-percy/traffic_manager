@@ -45,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/traffic"
+            android:textColor="#ffffff"
             android:drawableLeft="@drawable/upload"
             android:drawablePadding="3dip"/>
         
@@ -53,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/traffic"
+            android:textColor="#ffffff"
             android:drawableLeft="@drawable/download"
             android:drawablePadding="3dip"/>
         

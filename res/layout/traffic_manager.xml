@@ -17,12 +17,14 @@
         android:id="@+id/percent_hit"
         android:layout_centerHorizontal="true"
         android:text="70%  剩余"
+        android:textColor="#ffffff"
         android:paddingTop="120dp"/>
     <TextView 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/remain_hit"
         android:text="剩余流量 215Mb"
+        android:textColor="#ffffff"
         android:layout_below="@id/percent_hit"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
@@ -31,7 +33,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/discription"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
         android:layout_below="@id/circle_image"
          >
         <TextView
@@ -39,19 +40,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="8dip"
-            android:gravity="start"
+            android:textColor="#ffffff"
             android:text="@string/traffic" />
         <TextView 
             android:id="@+id/all_traffic_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"/>
+            android:textColor="#ffffff"
+            android:layout_centerHorizontal="true"/>
         <TextView
             android:id="@+id/tv_traffic_wifi"
+            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="8dip"
-            android:layout_gravity="right|end"
+            android:textColor="#ffffff"
             android:text="@string/traffic" />
     </RelativeLayout>
     <SlidingDrawer

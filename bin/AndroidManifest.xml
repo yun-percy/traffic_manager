@@ -2,7 +2,7 @@
     package="com.yusun.traffic_manager"
     android:versionCode="1"
     android:versionName="1.0" >
-
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />  
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="15" />
@@ -23,6 +23,13 @@
         </activity>
         <activity android:name="com.yusun.traffic_manager.traffic_settings"></activity>
         <activity android:name="com.yusun.traffic_manager.TrafficManagerActivity"></activity>
+        <receiver android:name="BootBroadcastReceiver">  
+                <intent-filter>  
+                    <action android:name="android.intent.action.BOOT_COMPLETED"></action>  
+                    <category android:name="android.intent.category.LAUNCHER" />  
+                </intent-filter>  
+            </receiver>  
+		<service android:name=".networkwriter"/>
     </application>
 
 </manifest>

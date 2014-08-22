@@ -24,12 +24,13 @@ public final class R {
         public static final int bg_transparent_press=0x7f020002;
         public static final int button_bg=0x7f020003;
         public static final int download=0x7f020004;
-        public static final int handle_down=0x7f020005;
-        public static final int handle_up=0x7f020006;
-        public static final int ic_action_search=0x7f020007;
-        public static final int icon=0x7f020008;
-        public static final int roller=0x7f020009;
-        public static final int upload=0x7f02000a;
+        public static final int handle=0x7f020005;
+        public static final int handle_down=0x7f020006;
+        public static final int handle_up=0x7f020007;
+        public static final int ic_action_search=0x7f020008;
+        public static final int icon=0x7f020009;
+        public static final int roller=0x7f02000a;
+        public static final int upload=0x7f02000b;
     }
     public static final class id {
         public static final int all_traffic=0x7f060015;

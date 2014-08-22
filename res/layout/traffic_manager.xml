@@ -64,12 +64,13 @@
         android:handle="@+id/iv_traffic_handle"
         android:layout_below="@id/discription"
         android:orientation="vertical" >
-        <ImageView
+         <ImageView
             android:id="@id/iv_traffic_handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/hello_world"
-            android:src="@drawable/handle_up" />
+            android:visibility="invisible"
+            android:src="@drawable/handle" />
         <ListView
             android:id="@id/lv_traffic_content"
             android:layout_width="match_parent"

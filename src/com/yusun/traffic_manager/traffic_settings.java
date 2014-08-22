@@ -60,10 +60,6 @@ OnClickListener doneListener = new OnClickListener() {
              
              edit.commit();  
              Toast.makeText(traffic_settings.this, "成功",Toast.LENGTH_LONG).show();  
-//			Toast.makeText(traffic_settings.this,"test", Toast.LENGTH_SHORT).show(); 
-//			String mall_traffic="100M";
-//		 	mall_traffic=all_traffic.getText().toString();
-//		 	display_all.setText("流量套餐为： "+mall_traffic+ "MB" );display_all.setVisibility(4);
              SharedPreferences ferences=getSharedPreferences("softinfo",0);  
             float all_data1=ferences.getFloat("all", 20);  
             float used_data1=ferences.getFloat("used",20);

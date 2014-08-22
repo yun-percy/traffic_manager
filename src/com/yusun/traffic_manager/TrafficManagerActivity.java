@@ -76,28 +76,28 @@ public class TrafficManagerActivity extends Activity
 		lv_traffic_content = (ListView) findViewById(R.id.lv_traffic_content);
 		remain_hit=(TextView)findViewById(R.id.remain_hit);
 		percent_hit=(TextView)findViewById(R.id.percent_hit);
-//		sector= (CircleProgress) findViewById(R.id.circle_image);
 		traffic_handle=(ImageView)findViewById(R.id.iv_traffic_handle);
-		
-		
-//		fix_all.setOnClickListener(new OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					 
-//				}
-//			});
-		setTotalTraffic();
-		
+		//setTotalTraffic();
 		trafficInfos = new ArrayList<TrafficInfo>();
 		initResolveInfos();
-		
-		
 		adapter = new TrafficAdapter();
 		lv_traffic_content.setAdapter(adapter);
+		/////////////////////////自动更新数据///////////
+
 		
+		final Handler handler =new Handler();
+		Runnable runnable=new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				setTotalTraffic();
+				handler.postDelayed(this, 8000);
+			}
+		};
+		handler.postDelayed(runnable, 2000);
+/////////////////////自动更新数据结束
 	}
-	
 	@Override
 	protected void onStart()
 	{
@@ -109,6 +109,7 @@ public class TrafficManagerActivity extends Activity
 			{
 				Message msg = Message.obtain();
 				handler.sendMessage(msg);
+				
 			}
 		};
 		timer.schedule(timerTask, 1000, 3000);
@@ -148,7 +149,7 @@ public class TrafficManagerActivity extends Activity
         Editor edit=preferences.edit();  
         edit.putFloat("used",new Float(mmtotal_2g_3g)); 
          edit.commit();  
-         Toast.makeText(TrafficManagerActivity.this, "成功",Toast.LENGTH_LONG).show();  
+       //  Toast.makeText(TrafficManagerActivity.this, "成功",Toast.LENGTH_LONG).show();  
          /////////////////////////////////////结束
 		 int percent= (int)(total_2g_3g/all_data*100);
 		 tv_traffic_2g_3g.setText("GPRS流量 \n" + TextFormater.dataSizeFormat(total_2g_3g));
@@ -157,27 +158,33 @@ public class TrafficManagerActivity extends Activity
 			total_2g_3g=total_2g_3g*1 ;
 			 percent= (int)(total_2g_3g/(all_data*1024*1024)*100);
 		}
-		else if(total_2g_3g < (1 << 20)) //左移20位，相当于1024 * 1024
+		else if(total_2g_3g < (1024*1024)) //左移20位，相当于1024 * 1024
 		{
 			total_2g_3g = total_2g_3g/1024; //右移10位，相当于除以1024
 			percent= (int)(total_2g_3g/(all_data*1024)*100);
 			 ;
 		}
-		else if(total_2g_3g < (1 << 30)) //左移30位，相当于1024 * 1024 * 1024
+		else if(total_2g_3g < (1024*1024*1024)) //左移30位，相当于1024 * 1024 * 1024
 		{
 			total_2g_3g = total_2g_3g/(1024*1024); //右移20位，相当于除以1024再除以1024
 			percent= (int)(total_2g_3g/all_data*100);
 			
 		}
-		else if(total_2g_3g < (1 << 40))
+		else if(total_2g_3g < (1024*1024*1024*1024))
 		{
 			total_2g_3g = total_2g_3g /(1024*1024*1024);
 			percent= (int)(total_2g_3g/(used_data)*100);
 		}
-		else
+		else if(total_2g_3g < (1024*1024*1024*1024*1024))
 		{
-			Toast.makeText(TrafficManagerActivity.this,"数据这么大？你玩我？",Toast.LENGTH_LONG).show();;
+			total_2g_3g = total_2g_3g /(1024*1024*1024);
+			percent= (int)(total_2g_3g/(used_data)*100);
 		}
+//		else
+//		{
+//			System.out.println(total_2g_3g+"**************************");
+//			Toast.makeText(TrafficManagerActivity.this,"数据这么大？你玩我？",Toast.LENGTH_LONG).show();;
+//		}
 //		++++++++++++++结束++++++++++++++
 		
 		//拿到总共接收到的数据大小
@@ -187,9 +194,9 @@ public class TrafficManagerActivity extends Activity
 		//拿到总数据大小
 		long total = total_received + total_transmitted;
 		////拿到wifi的总数据大小
-		long wifi_data=ferences.getLong("wifi", 0); 
-		long total_wifi = wifi_data+total - total_2g_3g_true;
-        edit.putLong("wifi",new Long(total_wifi)); 
+		long wifi_dataold=ferences.getLong("wifi", 0); 
+		long total_wifi = wifi_dataold*1024*1024+total - total_2g_3g_true;
+        edit.putLong("wifi",new Long(total_wifi/(1024*1024))); 
          edit.commit();  
 		tv_traffic_wifi.setText("wifi流量 \n" + TextFormater.dataSizeFormat(total_wifi));
 		
@@ -231,17 +238,6 @@ public class TrafficManagerActivity extends Activity
     		}
     	});
 	}
-//	OnClickListener circle_image_animationListenter=new OnClickListener() {
-//		
-//		@Override
-//		public void onClick(View arg0) {
-//			currentAnimation.start();
-//			
-//		}
-//	};
-		
-	
-//	##########################画圆##################3
 	//拿到所有会产生流量的应用信息
 	private void initResolveInfos()
 	{
@@ -329,17 +325,20 @@ public class TrafficManagerActivity extends Activity
 			{
 				view = View.inflate(TrafficManagerActivity.this, R.layout.traffic_manager_item, null);
 				holder = new ViewHolder();
+				
 				holder.iv_traffic_icon = (ImageView) view.findViewById(R.id.iv_traffic_icon);
 				holder.tv_traffic_name = (TextView) view.findViewById(R.id.tv_traffic_name);
 				holder.tv_traffic_received = (TextView) view.findViewById(R.id.tv_traffic_received);
 				holder.tv_traffic_transmitted = (TextView) view.findViewById(R.id.tv_traffic_transmitted);
 				view.setTag(holder);
+				
 			}
 			else
 			{
 				view = convertView;
 				holder = (ViewHolder) view.getTag();
 			}
+			
 			holder.iv_traffic_icon.setImageDrawable(info.getIcon());
 			holder.tv_traffic_name.setText(info.getName());
 			//根据uid得到这个应用的接收数据大小

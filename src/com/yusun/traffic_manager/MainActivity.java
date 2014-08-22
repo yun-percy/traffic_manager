@@ -7,22 +7,30 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.LocalActivityManager;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +42,7 @@ public class MainActivity extends Activity {
 	ViewPager pager = null;
 	TabHost tabHost = null;
 	TextView t1,t2,t3;
-	
+	LinearLayout ll;
 	private int offset = 0;
 	private int currIndex = 0;
 	private int bmpW;
@@ -76,21 +84,51 @@ public class MainActivity extends Activity {
 		context = MainActivity.this;
 		manager = new LocalActivityManager(this , true);
 		manager.dispatchCreate(savedInstanceState);
-
+		WallpaperManager wallpaperManager = WallpaperManager.getInstance(this); // 获取壁纸管理器
+		//获取当前壁纸
+		Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+		//将Drawable,转成Bitmap
+		Bitmap bm = ((BitmapDrawable) wallpaperDrawable).getBitmap();
+		ll= (LinearLayout) this.findViewById(R.id.ll);
+		//blur(bm,ll);
+		blur(bm,ll);
 		InitImageView();
 		initTextView();
 		initPagerViewer();
 
 	}
-
+	private void blur(Bitmap bkg, View view) { 
+		   long startMs = System.currentTimeMillis(); 
+		   float scaleFactor = 1; 
+		   float radius = 20; 
+		   //缩放比例
+		        scaleFactor = 15; 
+		        radius =2; 
+		        ll= (LinearLayout) this.findViewById(R.id.ll);
+		        Display mDisplay = getWindowManager().getDefaultDisplay();
+		        int w = mDisplay.getWidth();
+		        int h =mDisplay.getHeight();
+		   Bitmap overlay = Bitmap.createBitmap((int) (w/scaleFactor), 
+		           (int) (h/scaleFactor), Bitmap.Config.ARGB_8888); 
+		   Canvas canvas = new Canvas(overlay); 
+		   canvas.translate(-view.getLeft()/scaleFactor, -view.getTop()/scaleFactor); 
+		   canvas.scale(1 / scaleFactor, 1 / scaleFactor); 
+		   Paint paint = new Paint(); 
+		   paint.setFlags(Paint.FILTER_BITMAP_FLAG); 
+		   canvas.drawBitmap(bkg, 0, 0, paint); 
+		 
+		   //执行模糊
+		   overlay = FastBlur.doBlur(overlay, (int)radius, true); 
+		   
+		   
+		   view.setBackgroundDrawable(new BitmapDrawable(getResources(), overlay)); 
+		} 
 	private void initTextView() {
 		t1 = (TextView) findViewById(R.id.text1);
 		t2 = (TextView) findViewById(R.id.text2);
-		t3 = (TextView) findViewById(R.id.text3);
 
 		t1.setOnClickListener(new MyOnClickListener(0));
 		t2.setOnClickListener(new MyOnClickListener(1));
-		t3.setOnClickListener(new MyOnClickListener(2));
 		
 	}
 

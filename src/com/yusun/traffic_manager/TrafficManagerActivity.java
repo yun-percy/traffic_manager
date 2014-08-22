@@ -222,7 +222,7 @@ public class TrafficManagerActivity extends Activity
 	       
 
         drawable = new CircularProgressDrawable(getResources().getDimensionPixelSize(R.dimen.drawable_ring_size),
-                getResources().getColor(android.R.color.darker_gray),
+                getResources().getColor(android.R.color.white),
                 getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_blue_dark));
         circle_image.setImageDrawable(drawable);

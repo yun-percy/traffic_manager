@@ -45,13 +45,13 @@ public final class R {
         public static final int fix=0x7f06001a;
         public static final int iv_traffic_handle=0x7f06000f;
         public static final int iv_traffic_icon=0x7f060010;
-        public static final int linearLayout1=0x7f060001;
+        public static final int linearLayout1=0x7f060002;
+        public static final int ll=0x7f060001;
         public static final int lv_traffic_content=0x7f06000e;
         public static final int percent_hit=0x7f060008;
         public static final int remain_hit=0x7f060009;
-        public static final int text1=0x7f060002;
-        public static final int text2=0x7f060003;
-        public static final int text3=0x7f060004;
+        public static final int text1=0x7f060003;
+        public static final int text2=0x7f060004;
         public static final int tv_traffic_2g_3g=0x7f06000b;
         public static final int tv_traffic_name=0x7f060011;
         public static final int tv_traffic_received=0x7f060013;

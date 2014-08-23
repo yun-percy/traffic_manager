@@ -7,7 +7,7 @@ import android.sax.StartElementListener;
 
 public class BootBroadcastReceiver extends BroadcastReceiver {
 
-static final String ACTION = "com.cooee.launcher.action.show_workspace";
+static final String ACTION = "boot";
 
 @Override
 public void onReceive(Context context, Intent intent) {

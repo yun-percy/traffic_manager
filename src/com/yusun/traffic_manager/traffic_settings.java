@@ -43,7 +43,7 @@ OnClickListener doneListener = new OnClickListener() {
 		public void onClick(View v) {
 			  String all_data=all_traffic.getText().toString();  
              String used_data=used_traffic.getText().toString();  
-             SharedPreferences preferences=getSharedPreferences("Gprs_data",Context.MODE_WORLD_READABLE);  
+             SharedPreferences preferences=getSharedPreferences("Gprs_data",0);  
              Editor edit=preferences.edit();  
              if(all_data.equals("")){
              }
@@ -53,17 +53,20 @@ OnClickListener doneListener = new OnClickListener() {
             if(used_data.equals("")){
             }
             else{
-            		 edit.putFloat("gprsdatatemp",new Float(used_data)*1024*1024); 
-            	 }
+            	edit.putFloat("gprsdisplayMB",new Float(used_data));
+            	float MBtoBYTES=preferences.getFloat("gprsdisplayMB", 0);
+            	float used_data2=MBtoBYTES*1024*1024;
+            	edit.putFloat("gprsdisplay",new Float(used_data2));
+             }
              edit.commit();  
-             Toast.makeText(traffic_settings.this, "成功",Toast.LENGTH_LONG).show();  
-            float all_data1=preferences.getFloat("all", 20);  
-            float used_data1=preferences.getFloat("gprsdatatemp",20)/1024/1024;
+             Toast.makeText(traffic_settings.this, "设置成功",Toast.LENGTH_SHORT).show();
+             float all_data1=preferences.getFloat("all", 20);  
+             float used_data1=preferences.getFloat("gprsdisplay",20)/1024/1024;
           display_all.setText(String.valueOf(all_data1));  
           display_used.setText(String.valueOf(used_data1));  
           display_all.setVisibility(0);
           display_used.setVisibility(0);
- 			all_traffic.setVisibility(4);
+ 		   all_traffic.setVisibility(4);
  			used_traffic.setVisibility(4);
  			fix.setVisibility(0);
  			done.setVisibility(4);
@@ -110,7 +113,7 @@ OnClickListener doneListener = new OnClickListener() {
 	private void initView(){
 		SharedPreferences ferences=getSharedPreferences("Gprs_data",0);  
         float all_data=ferences.getFloat("all", 300);  
-        float used_data=ferences.getFloat("gprsdatatemp", 0)/1024/1024;  
+        float used_data=ferences.getFloat("gprsdisplay", 0)/1024/1024;  
         display_all.setText(String.valueOf(all_data));  
         display_used.setText(String.valueOf(used_data));  
 	}

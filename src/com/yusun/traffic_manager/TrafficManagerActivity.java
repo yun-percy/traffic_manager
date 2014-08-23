@@ -12,10 +12,8 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -41,12 +39,12 @@ import android.widget.Toast;
 
 public class TrafficManagerActivity extends Activity
 {
-	private TextView tv_traffic_2g_3g,all_traffic=null,used_traffic=null,remain_hit,percent_hit ;
+	private TextView tv_traffic_2g_3g,all_traffic=null,remain_hit,percent_hit ;
 	private TextView tv_traffic_wifi;
 	private ListView lv_traffic_content;
 	private TrafficAdapter adapter;
 	CircularProgressDrawable drawable;
-	private ImageView traffic_handle , circle_image;
+	private ImageView circle_image;
 //	CircleProgress sector;
 	private List<TrafficInfo> trafficInfos;
 
@@ -67,22 +65,15 @@ public class TrafficManagerActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		Intent sayHelloIntent=new Intent(TrafficManagerActivity.this,networkwriter.class);
-		System.out.println("云哥最帅了！！！！");
-		//context.startActivity(sayHelloIntent);
-		//Intent i = new Intent(StartActivity.this, StatusbarControlService.class);
 		this.startService(sayHelloIntent);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.traffic_manager);
 		all_traffic=(TextView)findViewById(R.id.all_traffic_main);
-		
-		//Toast.makeText(TrafficManagerActivity.this, (CharSequence) all_traffic,Toast.LENGTH_LONG).show();  
 		tv_traffic_2g_3g = (TextView) findViewById(R.id.tv_traffic_2g_3g);
 		tv_traffic_wifi = (TextView) findViewById(R.id.tv_traffic_wifi);
 		lv_traffic_content = (ListView) findViewById(R.id.lv_traffic_content);
 		remain_hit=(TextView)findViewById(R.id.remain_hit);
 		percent_hit=(TextView)findViewById(R.id.percent_hit);
-		traffic_handle=(ImageView)findViewById(R.id.iv_traffic_handle);
-		//setTotalTraffic();
 		trafficInfos = new ArrayList<TrafficInfo>();
 		initResolveInfos();
 		adapter = new TrafficAdapter();
@@ -95,9 +86,8 @@ public class TrafficManagerActivity extends Activity
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				setTotalTraffic();
-				handler.postDelayed(this, 8000);
+				handler.postDelayed(this,20000);
 			}
 		};
 		handler.postDelayed(runnable, 2000);
@@ -114,7 +104,6 @@ public class TrafficManagerActivity extends Activity
 			{
 				Message msg = Message.obtain();
 				handler.sendMessage(msg);
-				
 			}
 		};
 		timer.schedule(timerTask, 1000, 3000);
@@ -136,128 +125,72 @@ public class TrafficManagerActivity extends Activity
 	private void setTotalTraffic()
 	{
 //		++++++++++++++数据读取与转换++++++++
-		SharedPreferences ferences_settings=getSharedPreferences("Gprs_data",0);  
-        float all_data=ferences_settings.getFloat("all", 20);  
-        float used_data=ferences_settings.getFloat("used", 20);  
-        tv_traffic_2g_3g.setText(String.valueOf(used_data));  
+		 SharedPreferences ferences=getSharedPreferences("Gprs_data",0);  
+        float all_data=ferences.getFloat("all", 20);  
+        int percent =ferences.getInt("percent", 0);
+        float total_2g_3g=ferences.getFloat("gprsdisplay",0);
+        tv_traffic_2g_3g.setText(String.valueOf(total_2g_3g));  
         all_traffic.setText("流量套餐 \n"+String.valueOf(all_data)+"MB");
-        SharedPreferences ferences=getSharedPreferences("Gprs_data",0);  
-        float total_2g_3g=ferences.getFloat("gprsdatatemp",0);
-		 int percent= (int)(total_2g_3g/all_data*100);
 		 tv_traffic_2g_3g.setText("GPRS流量 \n" + TextFormater.dataSizeFormat(total_2g_3g));
-		if(total_2g_3g < 1024)
-		{
-			total_2g_3g=total_2g_3g*1 ;
-			 percent= (int)(total_2g_3g/(all_data*1024*1024)*100);
-		}
-		else if(total_2g_3g < (1024*1024)) //左移20位，相当于1024 * 1024
-		{
-			total_2g_3g = total_2g_3g/1024; //右移10位，相当于除以1024
-			percent= (int)(total_2g_3g/(all_data*1024)*100);
-			 ;
-		}
-		else if(total_2g_3g < (1024*1024*1024)) //左移30位，相当于1024 * 1024 * 1024
-		{
-			total_2g_3g = total_2g_3g/(1024*1024); //右移20位，相当于除以1024再除以1024
-			percent= (int)(total_2g_3g/all_data*100);
-			
-		}
-		else if(total_2g_3g < (1024*1024*1024*1024))
-		{
-			total_2g_3g = total_2g_3g /(1024*1024*1024);
-			percent= (int)(total_2g_3g/(used_data)*100);
-		}
-		else if(total_2g_3g < (1024*1024*1024*1024*1024))
-		{
-			total_2g_3g = total_2g_3g /(1024*1024*1024);
-			percent= (int)(total_2g_3g/(used_data)*100);
-		}
 //		++++++++++++++结束++++++++++++++
 		//wifi流量统计
-		SharedPreferences wifipreferences=getSharedPreferences("wifi_data",Context.MODE_WORLD_READABLE);  
 		SharedPreferences wififerences=getSharedPreferences("wifi_data",0);  
 		long wifi_datanow=wififerences.getLong("wifitemp", 0); 
 		tv_traffic_wifi.setText("wifi流量 \n" + TextFormater.dataSizeFormat(wifi_datanow));
-		
 //		##########################画圆##################
-		
-	
 		if(percent >=100){
 			percent=100;
 		}
 		percent_hit.setText(100-percent+"% 剩余");
 		DecimalFormat remainhit_format = new DecimalFormat("##0.00");
-		float remainhit_data=all_data-total_2g_3g;
+		float remainhit_data=all_data-(total_2g_3g/(1024*1024));
 		if(remainhit_data <0){
-			remainhit_data=total_2g_3g-all_data;
+			remainhit_data=total_2g_3g/1024/1024-all_data;
 			String remain_hitten=remainhit_format.format((remainhit_data));
 			remain_hit.setText("已超出 "+remain_hitten+"MB");
 			remain_hit.setTextColor(0xffba2835);
 		}
 		else if(remainhit_data >=0){
-			String remain_hitten=remainhit_format.format((all_data-total_2g_3g));
+			String remain_hitten=remainhit_format.format((all_data-total_2g_3g/1024/1024));
 			remain_hit.setText("剩余流量 "+remain_hitten+"MB");
 			remain_hit.setTextColor(0xffffffff);
 		}
-		
 		circle_image = (ImageView) findViewById(R.id.circle_image);
-	       
-
         drawable = new CircularProgressDrawable(getResources().getDimensionPixelSize(R.dimen.drawable_ring_size),
                 getResources().getColor(android.R.color.white),
                 getResources().getColor(android.R.color.holo_green_light),
                 getResources().getColor(android.R.color.holo_blue_dark));
         circle_image.setImageDrawable(drawable);
 		final Animator currentAnimation;
-		
     	currentAnimation = prepareStyle2Animation(percent);
     	currentAnimation.start();
     	circle_image.setOnClickListener(new OnClickListener(){
     		@Override
     		public void onClick(View arg0) {
     			currentAnimation.start();
-    			
     		}
     	});
 	}
-	//拿到所有会产生流量的应用信息
 	private void initResolveInfos()
 	{
 		trafficInfos.clear();
-		//拿到一个包管理器
 		PackageManager packageManager = this.getPackageManager();
 		Intent intent = new Intent();
-		//android.intent.action.MAIN这个action代表的就是应用的入口
 		intent.setAction("android.intent.action.MAIN");
-		//android.intent.category.LAUNCHER代表的就是在桌面创建一个图标
 		intent.addCategory("android.intent.category.LAUNCHER");
-		//这个方法就是根据对应的条件，intent指定条件，然后查询出相应的activity
-		//那么根据我们上面设置的intent，我们就可以知道，我们要查询的是应用的入口activity而且是桌面上有图标的activity
-		//因为这样的应用，才会有可能产生流量的
 		List<ResolveInfo> resolveInfos = packageManager.queryIntentActivities(intent, 0);
-		
 		for(ResolveInfo resolveInfo : resolveInfos)
 		{
-			//得到应用的名字
 			String name = resolveInfo.loadLabel(packageManager).toString();
-			//得到应用的图标
 			Drawable icon = resolveInfo.loadIcon(packageManager);
-			//得到应用的包名
 			String packageName = resolveInfo.activityInfo.packageName;
 			int uid = 0;;
 			try
 			{
-				//得到应用的packageInfo对象
 				PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
-				//得到这个应用对应的uid
 				uid = packageInfo.applicationInfo.uid;
-				//根据uid得到这个应用的接收数据大小
 				long received = TrafficStats.getUidRxBytes(uid);
-				//根据uid得到这个应用的发送数据大小
 				long transmitted = TrafficStats.getUidTxBytes(uid);
-				
-				//有些应用不会产生流量信息的，拿到的值就会是-1
-				//不产生流量的，我们就不把它加入到list里面
 				if(received == -1 && transmitted == -1 || (received == 0 && transmitted == 0))
 				{
 					continue;
@@ -274,30 +207,23 @@ public class TrafficManagerActivity extends Activity
 			trafficInfos.add(trafficInfo);
 		}
 	}
-	
-	//============================================================================================
-	
 	private class TrafficAdapter extends BaseAdapter
 	{
-
 		@Override
 		public int getCount()
 		{
 			return trafficInfos.size();
 		}
-
 		@Override
 		public Object getItem(int position)
 		{
 			return trafficInfos.get(position);
 		}
-
 		@Override
 		public long getItemId(int position)
 		{
 			return position;
 		}
-
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent)
 		{
@@ -308,25 +234,20 @@ public class TrafficManagerActivity extends Activity
 			{
 				view = View.inflate(TrafficManagerActivity.this, R.layout.traffic_manager_item, null);
 				holder = new ViewHolder();
-				
 				holder.iv_traffic_icon = (ImageView) view.findViewById(R.id.iv_traffic_icon);
 				holder.tv_traffic_name = (TextView) view.findViewById(R.id.tv_traffic_name);
 				holder.tv_traffic_received = (TextView) view.findViewById(R.id.tv_traffic_received);
 				holder.tv_traffic_transmitted = (TextView) view.findViewById(R.id.tv_traffic_transmitted);
 				view.setTag(holder);
-				
 			}
 			else
 			{
 				view = convertView;
 				holder = (ViewHolder) view.getTag();
 			}
-			
 			holder.iv_traffic_icon.setImageDrawable(info.getIcon());
 			holder.tv_traffic_name.setText(info.getName());
-			//根据uid得到这个应用的接收数据大小
 			long received = TrafficStats.getUidRxBytes(info.getUid());
-			//根据uid得到这个应用的发送数据大小
 			long transmitted = TrafficStats.getUidTxBytes(info.getUid());
 			holder.tv_traffic_received.setText(TextFormater.dataSizeFormat(received));
 			holder.tv_traffic_transmitted.setText(TextFormater.dataSizeFormat(transmitted));

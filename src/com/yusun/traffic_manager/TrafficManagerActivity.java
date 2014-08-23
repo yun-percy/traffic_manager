@@ -66,6 +66,11 @@ public class TrafficManagerActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Intent sayHelloIntent=new Intent(TrafficManagerActivity.this,networkwriter.class);
+		System.out.println("云哥最帅了！！！！");
+		//context.startActivity(sayHelloIntent);
+		//Intent i = new Intent(StartActivity.this, StatusbarControlService.class);
+		this.startService(sayHelloIntent);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.traffic_manager);
 		all_traffic=(TextView)findViewById(R.id.all_traffic_main);
@@ -130,27 +135,14 @@ public class TrafficManagerActivity extends Activity
 	
 	private void setTotalTraffic()
 	{
-		//拿到2G和3G的总共接收到的数据大小
-		long total_2g_3g_received = TrafficStats.getMobileRxBytes();
-		//拿到2G和3G的总共发送出去的数据大小
-		long total_2g_3g_transmitted  = TrafficStats.getMobileTxBytes();
-		//拿到2G和3G的总数据大小
-		long total_2g_3g_true = total_2g_3g_received + total_2g_3g_transmitted;
 //		++++++++++++++数据读取与转换++++++++
-		SharedPreferences ferences=getSharedPreferences("softinfo",0);  
-        float all_data=ferences.getFloat("all", 20);  
-        float used_data=ferences.getFloat("used", 20);  
+		SharedPreferences ferences_settings=getSharedPreferences("Gprs_data",0);  
+        float all_data=ferences_settings.getFloat("all", 20);  
+        float used_data=ferences_settings.getFloat("used", 20);  
         tv_traffic_2g_3g.setText(String.valueOf(used_data));  
         all_traffic.setText("流量套餐 \n"+String.valueOf(all_data)+"MB");
-		 float total_2g_3g =  total_2g_3g_received + total_2g_3g_transmitted + used_data*1024*1024;
-		 /////////////////////////////////////将更新的流量数据保留
-		float mmtotal_2g_3g = total_2g_3g/(1024*1024);
-         SharedPreferences preferences=getSharedPreferences("softinfo",Context.MODE_WORLD_READABLE);  
-        Editor edit=preferences.edit();  
-        edit.putFloat("used",new Float(mmtotal_2g_3g)); 
-         edit.commit();  
-       //  Toast.makeText(TrafficManagerActivity.this, "成功",Toast.LENGTH_LONG).show();  
-         /////////////////////////////////////结束
+        SharedPreferences ferences=getSharedPreferences("Gprs_data",0);  
+        float total_2g_3g=ferences.getFloat("gprsdatatemp",0);
 		 int percent= (int)(total_2g_3g/all_data*100);
 		 tv_traffic_2g_3g.setText("GPRS流量 \n" + TextFormater.dataSizeFormat(total_2g_3g));
 		if(total_2g_3g < 1024)
@@ -180,27 +172,15 @@ public class TrafficManagerActivity extends Activity
 			total_2g_3g = total_2g_3g /(1024*1024*1024);
 			percent= (int)(total_2g_3g/(used_data)*100);
 		}
-//		else
-//		{
-//			System.out.println(total_2g_3g+"**************************");
-//			Toast.makeText(TrafficManagerActivity.this,"数据这么大？你玩我？",Toast.LENGTH_LONG).show();;
-//		}
 //		++++++++++++++结束++++++++++++++
+		//wifi流量统计
+		SharedPreferences wifipreferences=getSharedPreferences("wifi_data",Context.MODE_WORLD_READABLE);  
+		SharedPreferences wififerences=getSharedPreferences("wifi_data",0);  
+		long wifi_datanow=wififerences.getLong("wifitemp", 0); 
+		tv_traffic_wifi.setText("wifi流量 \n" + TextFormater.dataSizeFormat(wifi_datanow));
 		
-		//拿到总共接收到的数据大小
-		long total_received = TrafficStats.getTotalRxBytes();
-		//拿到总共发送的数据大小
-		long total_transmitted = TrafficStats.getTotalTxBytes();
-		//拿到总数据大小
-		long total = total_received + total_transmitted;
-		////拿到wifi的总数据大小
-		long wifi_dataold=ferences.getLong("wifi", 0); 
-		long total_wifi = wifi_dataold*1024*1024+total - total_2g_3g_true;
-        edit.putLong("wifi",new Long(total_wifi/(1024*1024))); 
-         edit.commit();  
-		tv_traffic_wifi.setText("wifi流量 \n" + TextFormater.dataSizeFormat(total_wifi));
+//		##########################画圆##################
 		
-//		##########################画圆##################3
 	
 		if(percent >=100){
 			percent=100;
@@ -212,10 +192,12 @@ public class TrafficManagerActivity extends Activity
 			remainhit_data=total_2g_3g-all_data;
 			String remain_hitten=remainhit_format.format((remainhit_data));
 			remain_hit.setText("已超出 "+remain_hitten+"MB");
+			remain_hit.setTextColor(0xffba2835);
 		}
-		if(remainhit_data >=0){
+		else if(remainhit_data >=0){
 			String remain_hitten=remainhit_format.format((all_data-total_2g_3g));
 			remain_hit.setText("剩余流量 "+remain_hitten+"MB");
+			remain_hit.setTextColor(0xffffffff);
 		}
 		
 		circle_image = (ImageView) findViewById(R.id.circle_image);
@@ -273,9 +255,10 @@ public class TrafficManagerActivity extends Activity
 				long received = TrafficStats.getUidRxBytes(uid);
 				//根据uid得到这个应用的发送数据大小
 				long transmitted = TrafficStats.getUidTxBytes(uid);
+				
 				//有些应用不会产生流量信息的，拿到的值就会是-1
 				//不产生流量的，我们就不把它加入到list里面
-				if(received == -1 && transmitted == -1)
+				if(received == -1 && transmitted == -1 || (received == 0 && transmitted == 0))
 				{
 					continue;
 				}

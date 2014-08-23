@@ -26,6 +26,7 @@
 		 style="@style/setting_text"
 		 android:background="@null"
 		 android:textColorHint="#009944"
+		 android:numeric="integer"    
         android:hint="请输入数字"/>
     
     <TextView 
@@ -54,6 +55,7 @@
         android:layout_centerHorizontal="true"
         android:background="@null"
         android:textColorHint="#009944"
+        android:numeric="integer"    
         android:hint="不输入则不改变"/>
     <Button 
         android:layout_width="200dp"

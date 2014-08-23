@@ -43,10 +43,9 @@ OnClickListener doneListener = new OnClickListener() {
 		public void onClick(View v) {
 			  String all_data=all_traffic.getText().toString();  
              String used_data=used_traffic.getText().toString();  
-             SharedPreferences preferences=getSharedPreferences("softinfo",Context.MODE_WORLD_READABLE);  
+             SharedPreferences preferences=getSharedPreferences("Gprs_data",Context.MODE_WORLD_READABLE);  
              Editor edit=preferences.edit();  
              if(all_data.equals("")){
-            	
              }
              else {
             	 edit.putFloat("all", new Float(all_data)); 
@@ -54,15 +53,12 @@ OnClickListener doneListener = new OnClickListener() {
             if(used_data.equals("")){
             }
             else{
-            		 edit.putFloat("used",new Float(used_data)); 
+            		 edit.putFloat("gprsdatatemp",new Float(used_data)*1024*1024); 
             	 }
-             
-             
              edit.commit();  
              Toast.makeText(traffic_settings.this, "成功",Toast.LENGTH_LONG).show();  
-             SharedPreferences ferences=getSharedPreferences("softinfo",0);  
-            float all_data1=ferences.getFloat("all", 20);  
-            float used_data1=ferences.getFloat("used",20);
+            float all_data1=preferences.getFloat("all", 20);  
+            float used_data1=preferences.getFloat("gprsdatatemp",20)/1024/1024;
           display_all.setText(String.valueOf(all_data1));  
           display_used.setText(String.valueOf(used_data1));  
           display_all.setVisibility(0);
@@ -72,6 +68,11 @@ OnClickListener doneListener = new OnClickListener() {
  			fix.setVisibility(0);
  			done.setVisibility(4);
  			cancel.setVisibility(4);
+ 			View view = getWindow().peekDecorView();
+	        if (view != null) {
+	            InputMethodManager inputmanger = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+	        }
 		}
 	};
 	OnClickListener fixListener = new OnClickListener() {
@@ -107,9 +108,9 @@ OnClickListener doneListener = new OnClickListener() {
 		}
 	};
 	private void initView(){
-		SharedPreferences ferences=getSharedPreferences("softinfo",0);  
+		SharedPreferences ferences=getSharedPreferences("Gprs_data",0);  
         float all_data=ferences.getFloat("all", 300);  
-        float used_data=ferences.getFloat("used", 0);  
+        float used_data=ferences.getFloat("gprsdatatemp", 0)/1024/1024;  
         display_all.setText(String.valueOf(all_data));  
         display_used.setText(String.valueOf(used_data));  
 	}

@@ -22,6 +22,28 @@ public class networkwriter extends Service {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+//				System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+//		    	System.out.println("云哥最帅了！！！！");
+		    	
 				checkWifiData();
 				checkGPRSData();
 				checkpercent();
@@ -47,15 +69,34 @@ public class networkwriter extends Service {
 		long total_2g_3g_true = total_2g_3g_received + total_2g_3g_transmitted;
 		float base_Gprsdata=ferences.getFloat("gprsdatabase", 0);
 		float old_Gprsdata=ferences.getFloat("gprsdisplay",0);
+		float newtraffic=(float)total_2g_3g_true;
+		float oldtraffic=ferences.getFloat("old_traffic", 0);
 		Editor edit=ferences.edit();  
-	    if(total_2g_3g_true<2*1024){
-    	   edit.putFloat("gprsdatabase",new Float(old_Gprsdata));
-       }
-	   base_Gprsdata=ferences.getFloat("gprsdatabase", 0);
-	   float display_data= base_Gprsdata+(float)total_2g_3g_true;
-	   edit.putFloat("gprsdisplay", new Float(display_data));
-	   edit.commit(); 
+		if(oldtraffic>newtraffic){
+			System.out.println("云哥已经重启过手机了！");
+			base_Gprsdata=old_Gprsdata;
+			edit.putFloat("gprsdatabase",new Float(base_Gprsdata));
+			edit.putFloat("gprsdisplay",new Float(base_Gprsdata+newtraffic));
+			edit.putFloat("old_traffic",new Float(newtraffic));
+		}
+		else{
+			
+			
+			System.out.println("云哥没有没有重启过");
+			edit.putFloat("gprsdisplay",new Float(newtraffic-oldtraffic+base_Gprsdata));
+			edit.putFloat("old_traffic",new Float(newtraffic));
+		}
 	}
+	
+//		Editor edit=ferences.edit();  
+//	    if(total_2g_3g_true<2*1024){
+//    	   edit.putFloat("gprsdatabase",new Float(old_Gprsdata));
+//       }
+//	   base_Gprsdata=ferences.getFloat("gprsdatabase", 0);
+//	   float display_data= base_Gprsdata+(float)total_2g_3g_true;
+//	   edit.putFloat("gprsdisplay", new Float(display_data));
+//	   edit.commit(); 
+//	}
 	private void checkWifiData() {
 		super.onCreate();
 		SharedPreferences ferences=getSharedPreferences("wifi_data",0);  

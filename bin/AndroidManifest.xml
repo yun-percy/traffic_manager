@@ -23,7 +23,7 @@
         </activity>
         <activity android:name="com.yusun.traffic_manager.traffic_settings"></activity>
         <activity android:name="com.yusun.traffic_manager.TrafficManagerActivity"></activity>
-        <receiver android:name="BootBroadcastReceiver">  
+        <receiver android:name="com.yusun.traffic_manager.BootBroadcastReceiver">  
                 <intent-filter>  
                     <action android:name="android.intent.action.BOOT_COMPLETED"></action>  
                     <category android:name="android.intent.category.LAUNCHER" />  
